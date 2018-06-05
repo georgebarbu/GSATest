@@ -3,3 +3,10 @@
 ################################################################################
 
 /.vs/GSATest/v15/.suo
+/Exercise/.vs
+/Exercise/Exercise.Web/bin/Debug/netcoreapp2.0
+/Exercise/Exercise.Web/obj
+/Exercise/Exercise.Tests/bin/Debug/netcoreapp2.0
+/Exercise/Exercise.Tests/obj
+/.vs
+*.user
