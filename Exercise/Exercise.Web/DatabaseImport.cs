@@ -11,10 +11,6 @@ namespace Exercise.Web
             // Create database, tables, and so on here
         }
 
-        public void ImportStrategies()
-        {
-            
-        }
 
         public void ImportCapital()
         {
@@ -30,8 +26,8 @@ namespace Exercise.Web
     public interface IDatabaseImport
     {
         void InitializeDatabase();
-        void ImportStrategies();
-        void ImportCapital();
-        void ImportPnL();
+        //void ImportStrategies();
+        //void ImportCapital();
+        //void ImportPnL();
     }
 }

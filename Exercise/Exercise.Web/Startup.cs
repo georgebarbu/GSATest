@@ -17,9 +17,20 @@ namespace Exercise.Web
         {
             Configuration = configuration;
 
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            //var dbImporter = new DatabaseImport();
+            //dbImporter.InitializeDatabase();
+
+            //var strategyImporter = new StrategyImporter(@"D:\Work\GSA\properties.csv", connectionString);
+            //strategyImporter.ImportCsv();
+
+            var pnlImporter = new PnLImporter(@"D:\Work\GSA\pnl.csv", connectionString);
+            pnlImporter.ImportCsv();
+
 
         }   
-
+        
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
