@@ -25,10 +25,11 @@ namespace Exercise.Web
             //var strategyImporter = new StrategyImporter(@"D:\Work\GSA\properties.csv", connectionString);
             //strategyImporter.ImportCsv();
 
-            var pnlImporter = new PnLImporter(@"D:\Work\GSA\pnl.csv", connectionString);
-            pnlImporter.ImportCsv();
+            //var pnlImporter = new PnLImporter(@"D:\Work\GSA\pnl.csv", connectionString);
+            //pnlImporter.ImportCsv();
 
-
+            var capitalImport = new CapitalImporter(@"D:\Work\GSA\capital.csv", connectionString);
+            capitalImport.ImportCsv();
         }   
         
         public IConfiguration Configuration { get; }
