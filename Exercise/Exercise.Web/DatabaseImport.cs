@@ -10,24 +10,10 @@ namespace Exercise.Web
         {
             // Create database, tables, and so on here
         }
-
-
-        public void ImportCapital()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ImportPnL()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public interface IDatabaseImport
     {
         void InitializeDatabase();
-        //void ImportStrategies();
-        //void ImportCapital();
-        //void ImportPnL();
     }
 }

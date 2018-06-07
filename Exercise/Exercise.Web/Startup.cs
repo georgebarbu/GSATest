@@ -38,6 +38,10 @@ namespace Exercise.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.Configure<MyOptions>(myOptions =>
+            {
+                myOptions.ConnString = Configuration.GetConnectionString("DefaultConnection");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,5 +54,11 @@ namespace Exercise.Web
 
             app.UseMvc();
         }
+
+        public class MyOptions
+        {
+            public string ConnString { get; set; }
+        }
     }
+
 }
