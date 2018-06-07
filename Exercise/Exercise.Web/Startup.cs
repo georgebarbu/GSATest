@@ -28,8 +28,8 @@ namespace Exercise.Web
             //var pnlImporter = new PnLImporter(@"D:\Work\GSA\pnl.csv", connectionString);
             //pnlImporter.ImportCsv();
 
-            var capitalImport = new CapitalImporter(@"D:\Work\GSA\capital.csv", connectionString);
-            capitalImport.ImportCsv();
+            //var capitalImport = new CapitalImporter(@"D:\Work\GSA\capital.csv", connectionString);
+            //capitalImport.ImportCsv();
         }   
         
         public IConfiguration Configuration { get; }
