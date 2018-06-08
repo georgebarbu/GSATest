@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -37,7 +34,7 @@ namespace Exercise.Web.Controllers
             var strategiesList = strategies.Split(',');
             using (var sqlConn = new SqlConnection(ConnStr))
             {
-                string sql = @"SELECT s.Name AS Strategy,
+                const string sql = @"SELECT s.Name AS Strategy,
 		                                   c.Date,
 		                                   c.Capital
 	                                FROM dbo.Capital c
