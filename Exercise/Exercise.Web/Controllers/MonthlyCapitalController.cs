@@ -34,12 +34,9 @@ namespace Exercise.Web.Controllers
             var strategiesList = strategies.Split(',');
             using (var sqlConn = new SqlConnection(ConnStr))
             {
-                const string sql = @"SELECT s.Name AS Strategy,
-		                                   c.Date,
-		                                   c.Capital
+                const string sql = @"SELECT s.Name AS Strategy, c.Date, c.Capital
 	                                FROM dbo.Capital c
-		                                INNER JOIN dbo.Strategy s
-			                                ON c.StrategyId = s.Id
+		                            INNER JOIN dbo.Strategy s ON c.StrategyId = s.Id
 	                                WHERE s.Name IN @Strategies
                                     GROUP BY s.Name, c.Date, c.Capital";
 
