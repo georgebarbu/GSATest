@@ -4,30 +4,29 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Exercise.Web
 {
-    public class StrategyImporter : ICsvImporter
+    public class StrategyImporter : IStrategyImporter
     {
-        public StrategyImporter(string strategyFilePath, string connectionString)
+        private readonly ILogger<StrategyImporter> _logger;
+
+        public StrategyImporter(ILogger<StrategyImporter> logger)
         {
-            StrategyFilePath = strategyFilePath;
-            ConnectionString = connectionString;
+            _logger = logger;
         }
 
-        public string StrategyFilePath { get; }
-        public string ConnectionString { get; }
-
-        public bool ImportCsv()
+        public bool ImportStrategy(string connectionString)
         {
-            using (var reader = File.OpenText(StrategyFilePath))
+            using (var reader = File.OpenText("properties.csv"))
             {
                 var csv = new CsvReader(reader);
                 var strategies = csv.GetRecords<Strategy>().ToList();
 
                 if (!strategies.Any()) return false;
 
-                using (var sqlConnection = new SqlConnection(ConnectionString))
+                using (var sqlConnection = new SqlConnection(connectionString))
                 {
                     foreach (var strategy in strategies)
                     {

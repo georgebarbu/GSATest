@@ -3,10 +3,9 @@ using System.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Exercise.Web.Controllers
@@ -15,17 +14,21 @@ namespace Exercise.Web.Controllers
     [Route("api/Cumulative-Pnl")]
     public class CumulativePnlController : Controller
     {
+        private readonly ILogger<CumulativePnlController> _logger;
+
         public string ConnStr { get; set; }
 
-        public CumulativePnlController(IOptions<Startup.MyOptions> optionsAccessor)
+        public CumulativePnlController(IOptions<Startup.MyConfiguration> optionsAccessor, 
+            ILogger<CumulativePnlController> logger)
         {
+            _logger = logger;
             ConnStr = optionsAccessor.Value.ConnString;
         }
 
         [HttpGet]
-        public IEnumerable<CumulativePnlResult> Get(string startDate, string region)
+        public IEnumerable<CumulativePnlResult> Get(CumulativePnlResultRequest request) //Get(string startDate, string region)
         {
-            var regions = region.Split(',');
+            var regions = request.Region.Split(',');
 
             using (var sqlConn = new SqlConnection(ConnStr))
             {
@@ -37,15 +40,15 @@ namespace Exercise.Web.Controllers
                                     GROUP BY s.Name, p.Date, p.PnL, r.Name
                                     ORDER BY p.Date";
 
-                var results = sqlConn.Query<PnlResult>(sql, 
-                    new { StartDate = startDate, Regions = regions }, 
-                    commandType:CommandType.Text).ToList();
+                var results = sqlConn.Query<PnlResult>(sql,
+                    new { StartDate = request.StartDate, Regions = regions },
+                    commandType: CommandType.Text).ToList();
 
                 var cummulativePnlResult = new List<CumulativePnlResult>();
                 foreach (var r in regions)
                 {
                     var regionPnLs = results.GroupBy(e => e.Date)
-                        .Select(pnlGroup => new {Date = pnlGroup.Key, Pnl = pnlGroup.Sum(p => p.PnL)});
+                        .Select(pnlGroup => new { Date = pnlGroup.Key, Pnl = pnlGroup.Sum(p => p.PnL) });
 
                     decimal accumulator = 0;
                     foreach (var regionPnL in regionPnLs)
@@ -59,6 +62,8 @@ namespace Exercise.Web.Controllers
                         });
                     }
                 }
+
+                _logger.LogInformation("CumulativePnlResult done.");
 
                 return cummulativePnlResult;
             }

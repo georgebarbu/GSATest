@@ -6,28 +6,27 @@ using System.Reflection;
 using CsvHelper;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Exercise.Web
 {
-    public class CapitalImporter : ICsvImporter
+    public class CapitalImporter : ICapitalImporter
     {
-        public CapitalImporter(string capitalFilePath, string connectionString)
+        private readonly ILogger<CapitalImporter> _logger;
+
+        public CapitalImporter(ILogger<CapitalImporter> logger)
         {
-            CapitalFilePath = capitalFilePath;
-            ConnectionString = connectionString;
+            _logger = logger;
         }
 
-        public string CapitalFilePath { get; }
-        public string ConnectionString { get; }
-
-        public bool ImportCsv()
+        public bool ImportCapital(string connectionString)
         {
-            using (var reader = File.OpenText(CapitalFilePath))
+            using (var reader = File.OpenText("Capital.csv"))
             {
                 var csv = new CsvReader(reader);
                 var capitalList = csv.GetRecords<Capital>().ToList();
                 if (!capitalList.Any()) return false;
-                using (var sqlConnection = new SqlConnection(ConnectionString))
+                using (var sqlConnection = new SqlConnection(connectionString))
                 {
                     var strategies = sqlConnection.Query<StrategyDto>("GetStrategies")
                         .ToDictionary(k => k.Name, k => k.Id);

@@ -14,7 +14,7 @@ namespace Exercise.Web.Controllers
     {
         public string ConnStr { get; set; }
 
-        public CompoundDailyReturnsController(IOptions<Startup.MyOptions> optionsAccessor)
+        public CompoundDailyReturnsController(IOptions<Startup.MyConfiguration> optionsAccessor)
         {
             ConnStr = optionsAccessor.Value.ConnString;
         }
@@ -22,9 +22,11 @@ namespace Exercise.Web.Controllers
         [HttpGet("{strategy}")]
         public IEnumerable<CompoundDailyReturnsResult> Get(string strategy)
         {
-            var t = strategy;
 
-            return null;
+
+
+
+            return new List<CompoundDailyReturnsResult>();
         }
     }
 

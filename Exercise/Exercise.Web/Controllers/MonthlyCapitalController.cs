@@ -14,7 +14,7 @@ namespace Exercise.Web.Controllers
     {
         public string ConnStr { get; set; }
 
-        public MonthlyCapitalController(IOptions<Startup.MyOptions> optionsAccessor)
+        public MonthlyCapitalController(IOptions<Startup.MyConfiguration> optionsAccessor)
         {
             ConnStr = optionsAccessor.Value.ConnString;
         }
@@ -22,7 +22,7 @@ namespace Exercise.Web.Controllers
         [HttpGet]
         public IEnumerable<CapitalResult> Get(string strategies)
         {
-            if (string.IsNullOrWhiteSpace(strategies))
+            if (null == strategies)
             {
                 using (var sqlConn = new SqlConnection(ConnStr))
                 {
@@ -32,6 +32,7 @@ namespace Exercise.Web.Controllers
             }
 
             var strategiesList = strategies.Split(',');
+
             using (var sqlConn = new SqlConnection(ConnStr))
             {
                 const string sql = @"SELECT s.Name AS Strategy, c.Date, c.Capital
@@ -41,7 +42,7 @@ namespace Exercise.Web.Controllers
                                     GROUP BY s.Name, c.Date, c.Capital";
 
                 var results = sqlConn.Query<CapitalResult>(sql,
-                    new {Strategies = strategiesList},
+                    new {Strategies = strategiesList },
                     commandType: CommandType.Text);
 
                 return results;

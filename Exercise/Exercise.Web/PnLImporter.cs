@@ -6,28 +6,27 @@ using System.Reflection;
 using CsvHelper;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Exercise.Web
 {
-    public class PnLImporter : ICsvImporter
+    public class PnLImporter : IPnlImporter
     {
-        public string PnlFilePath { get; }
-        public string ConnectionString { get; }
+        private readonly ILogger<PnLImporter> _logger;
 
-        public PnLImporter(string pnlFilePath, string connectionString)
+        public PnLImporter(ILogger<PnLImporter> logger)
         {
-            PnlFilePath = pnlFilePath;
-            ConnectionString = connectionString;
+            _logger = logger;
         }
 
-        public bool ImportCsv()
+        public bool ImportPnL(string connectionString)
         {
-            using (var reader = File.OpenText(PnlFilePath))
+            using (var reader = File.OpenText("pnl.csv"))
             {
                 var csv = new CsvReader(reader);
                 var pnls = csv.GetRecords<Pnl>().ToList();
                 if (!pnls.Any()) return false;
-                using (var sqlConnection = new SqlConnection(ConnectionString))
+                using (var sqlConnection = new SqlConnection(connectionString))
                 {
                     var strategies = sqlConnection.Query<StrategyDto>("GetStrategies")
                         .ToDictionary(k => k.Name, k => k.Id);

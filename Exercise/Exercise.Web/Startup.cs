@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Exercise.Web
 {
@@ -17,18 +12,7 @@ namespace Exercise.Web
         {
             Configuration = configuration;
 
-            //var dbImporter = new DatabaseImport();
-            //dbImporter.InitializeDatabase(Configuration.GetConnectionString("DefaultConnection"));
-
-            //var strategyImporter = new StrategyImporter(@"D:\Work\GSA\properties.csv", connectionString);
-            //strategyImporter.ImportCsv();
-
-            //var pnlImporter = new PnLImporter(@"D:\Work\GSA\pnl.csv", connectionString);
-            //pnlImporter.ImportCsv();
-
-            //var capitalImport = new CapitalImporter(@"D:\Work\GSA\capital.csv", connectionString);
-            //capitalImport.ImportCsv();
-        }
+                    }
 
         public IConfiguration Configuration { get; }
 
@@ -36,26 +20,35 @@ namespace Exercise.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.Configure<MyOptions>(myOptions =>
+            services.Configure<MyConfiguration>(myOptions =>
             {
                 myOptions.ConnString = Configuration.GetConnectionString("DefaultConnection");
+                myOptions.MasterConnString = Configuration.GetConnectionString("MasterDBConnection");
             });
+
+            services.Add(new ServiceDescriptor(typeof(IDatabaseImport), typeof(DatabaseImport), ServiceLifetime.Singleton));
+            services.Add(new ServiceDescriptor(typeof(IPnlImporter), typeof(PnLImporter), ServiceLifetime.Singleton));
+            services.Add(new ServiceDescriptor(typeof(IStrategyImporter), typeof(StrategyImporter), ServiceLifetime.Singleton));
+            services.Add(new ServiceDescriptor(typeof(ICapitalImporter), typeof(CapitalImporter), ServiceLifetime.Singleton));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            loggerFactory.AddLog4Net();
+           
             app.UseMvc();
         }
 
-        public class MyOptions
+        public class MyConfiguration
         {
             public string ConnString { get; set; }
+            public string MasterConnString { get; set; }
         }
     }
 
